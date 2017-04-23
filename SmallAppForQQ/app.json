@@ -1,10 +1,9 @@
-
 {
   "pages":[
-
+        "pages/dynamic/p2p/p2p",
+    "pages/dynamic/dynamic",
     "pages/message/message",
     "pages/contact/contact",
-    "pages/dynamic/dynamic",
     "pages/dynamic/music/music",
     "pages/message/chat/chat",
     "pages/message/search/search",

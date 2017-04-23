@@ -24,6 +24,11 @@ Page({
         icon:"/images/kan.png",
         rightImage:"/images/tip.png"
         },
+        {
+        groupName:"理财",
+        icon:"/images/kan.png",
+        rightImage:"/images/tip.png"
+        },
       {
         groupName:"音乐",
         icon:"/images/song.png",
@@ -74,6 +79,10 @@ Page({
            console.log(Ind);
            switch(Ind){
              case 3://判断跳转页面
+               wx.navigateTo({
+                 url:"/pages/dynamic/p2p/p2p"
+               });
+              case 4://判断跳转页面
                wx.navigateTo({
                  url:"/pages/dynamic/music/music"
                });
