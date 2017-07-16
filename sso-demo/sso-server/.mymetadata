@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-module
+  type="WEB"
+  name="sso-server"
+  id="myeclipse.1500212964875"
+  context-root="/sso-server"
+  j2ee-spec="6.0"
+  archive="sso-server.war">
+  <attributes>
+    <attribute name="webrootdir" value="src/main/webapp" />
+  </attributes>
+</project-module>
+
