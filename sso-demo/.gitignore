@@ -1,0 +1,10 @@
+**/.settings/
+**/.classpath
+**/.project
+**/.idea/
+**/*.iml
+**/target/
+**/trc/
+**/WebRoot/
+**/bin/
+**/rebel.xml
