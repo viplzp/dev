@@ -26,8 +26,17 @@
         <servlet-name>ticket</servlet-name>
         <servlet-class>com.cloud.sso.server.servlet.TicketServlet</servlet-class>
     </servlet>
+  <servlet>
+    <servlet-name>LoginPage</servlet-name>
+    <servlet-class>com.cloud.sso.server.servlet.LoginPage</servlet-class>
+  </servlet>
+
     <servlet-mapping>
         <servlet-name>ticket</servlet-name>
         <url-pattern>/ticket</url-pattern>
     </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>LoginPage</servlet-name>
+    <url-pattern>/user/loginPage</url-pattern>
+  </servlet-mapping>
 </web-app>

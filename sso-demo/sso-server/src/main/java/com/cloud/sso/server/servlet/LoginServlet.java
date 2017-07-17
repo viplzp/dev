@@ -1,6 +1,8 @@
 package com.cloud.sso.server.servlet;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.HashMap;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -15,7 +17,7 @@ public class LoginServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        this.doPost(request, response);
+       this.doPost(request, response);
     }
 
     @Override
@@ -23,32 +25,28 @@ public class LoginServlet extends HttpServlet {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
         String service = request.getParameter("service");
+        HashMap<String,Object>userMap=new HashMap<String,Object>();
+        userMap.put("username", username);
+        userMap.put("password", password);
+        System.out.println("服务器接受参数："+userMap.toString());
+        PrintWriter writer = response.getWriter();
 
         if ("cloud".equals(username) && "cloud".equals(password)) {
+        	String jesessionid = request.getSession().getId();
         	System.out.println("sso 登录成功！！！！");
-            Cookie cookie = new Cookie("sso", username);
+            Cookie cookie = new Cookie("sso", jesessionid);
             cookie.setPath("/");
+            cookie.setMaxAge(60);
             response.addCookie(cookie);
 
             long time = System.currentTimeMillis();
             String timeString = username + time;
-            JVMCache.TICKET_AND_NAME.put(timeString, username);
+            JVMCache.TICKET_AND_NAME.put(timeString, userMap.toString());
+            JVMCache.TICKET_AND_NAME.put(jesessionid, userMap.toString());
+            writer.write(timeString);
 
-            if (null != service) {
-                StringBuilder url = new StringBuilder();
-                url.append(service);
-                if (0 <= service.indexOf("?")) {
-                    url.append("&");
-                } else {
-                    url.append("?");
-                }
-                url.append("ticket=").append(timeString);
-                response.sendRedirect(url.toString());
-            } else {
-                response.sendRedirect("/sso/index.jsp");
-            }
         } else {
-            response.sendRedirect("/sso/index.jsp?service=" + service);
+        	writer.write("false");
         }
     }
 

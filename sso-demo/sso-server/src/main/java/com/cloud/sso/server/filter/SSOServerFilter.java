@@ -29,11 +29,13 @@ public class SSOServerFilter implements Filter {
         Cookie[] cookies = request.getCookies();
         System.out.println("sso server is called:service->"+service);
         System.out.println("ticket->"+ticket);
-        String username = "";
+        System.out.println("url->"+request.getRequestURL());
+        String jsessionid = "";
         if (null != cookies) {
             for (Cookie cookie : cookies) {
+            	System.out.println(cookie.getName()+"="+cookie.getValue());
                 if ("sso".equals(cookie.getName())) {
-                    username = cookie.getValue();
+                	jsessionid = cookie.getValue();
                     break;
                 }
             }
@@ -44,10 +46,11 @@ public class SSOServerFilter implements Filter {
             return;
         }
 
-        if (null != username && !"".equals(username)) {
+        if (null != jsessionid && !"".equals(jsessionid)) {
             long time = System.currentTimeMillis();
-            String timeString = username + time;
-            JVMCache.TICKET_AND_NAME.put(timeString, username);
+            String timeString = jsessionid + time;
+            JVMCache.TICKET_AND_NAME.put(timeString, JVMCache.TICKET_AND_NAME.get(jsessionid));
+    		System.out.println( timeString);
     		System.out.println( JVMCache.TICKET_AND_NAME.size());
 
             StringBuilder url = new StringBuilder();

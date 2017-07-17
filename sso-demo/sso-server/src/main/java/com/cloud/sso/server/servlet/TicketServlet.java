@@ -21,10 +21,14 @@ public class TicketServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String ticket = request.getParameter("ticket");
+        System.out.println("ticket:"+ticket);
         String username = JVMCache.TICKET_AND_NAME.get(ticket);
         JVMCache.TICKET_AND_NAME.remove(ticket);
-        PrintWriter writer = response.getWriter();
-        writer.write(username);
+        System.out.println("JVMCache:"+JVMCache.TICKET_AND_NAME.toString());
+        if(null!=username&&!"".equals(username)){
+        	PrintWriter writer = response.getWriter();
+        	writer.write(username);       	
+        }
     }
 
 }

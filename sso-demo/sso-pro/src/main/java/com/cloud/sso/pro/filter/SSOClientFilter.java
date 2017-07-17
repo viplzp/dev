@@ -2,6 +2,7 @@ package com.cloud.sso.pro.filter;
 
 import java.io.IOException;
 import java.net.URLEncoder;
+import java.util.Map;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -13,11 +14,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.methods.PostMethod;
 
-public class SSOClientFilter implements Filter {
+import com.cloud.sso.pro.util.HttpUtil;
 
+public class SSOClientFilter implements Filter {
+	private static String serverLogin="http://localhost:8081/sso/user/loginPage";
     @Override
     public void destroy() {
     }
@@ -30,9 +34,13 @@ public class SSOClientFilter implements Filter {
         String username = (String) session.getAttribute("username");
         String ticket = request.getParameter("ticket");
         String url = URLEncoder.encode(request.getRequestURL().toString(), "UTF-8");
+    	String path = request.getContextPath();
+    	String basePath = request.getScheme() + "://"
+    			+ request.getServerName() + ":" + request.getServerPort()
+    			+ path + "/";
         System.out.println("pro filter:username>"+username);
         System.out.println("ticket->"+ticket+";url->"+url);
-        if (null == username) {
+        if (null == username&&url.indexOf("login")<0) {
             if (null != ticket && !"".equals(ticket)) {
                 PostMethod postMethod = new PostMethod("http://localhost:8081/sso/ticket");
                 postMethod.addParameter("ticket", ticket);
@@ -49,10 +57,22 @@ public class SSOClientFilter implements Filter {
                     session.setAttribute("username", username);
                     filterChain.doFilter(request, response);
                 } else {
-                    response.sendRedirect("http://localhost:8081/sso/index.jsp?service=" + url);
+					HttpUtil.sendPost(serverLogin, null, "UTF-8", "1");
+					String jumpUrl=basePath+"loginPage";
+					if(url.indexOf("loginPage")>0){
+			            filterChain.doFilter(request, response);
+					}else{
+						response.sendRedirect(jumpUrl+"?service=" + url);					
+					}
                 }
             } else {
-                response.sendRedirect("http://localhost:8081/sso/index.jsp?service=" + url);
+            	HttpUtil.sendPost(serverLogin, null, "UTF-8", "1");
+				String jumpUrl=basePath+"loginPage";
+				if(url.indexOf("loginPage")>0){
+		            filterChain.doFilter(request, response);
+				}else{
+					response.sendRedirect(jumpUrl+"?service=" + url);					
+				}
             }
         } else {
             filterChain.doFilter(request, response);
