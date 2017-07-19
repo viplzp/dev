@@ -30,10 +30,11 @@ public class SSOServerFilter implements Filter {
         System.out.println("sso server is called:service->"+service);
         System.out.println("ticket->"+ticket);
         System.out.println("url->"+request.getRequestURL());
+        System.out.println("cookies:"+cookies.length);
         String jsessionid = "";
         if (null != cookies) {
             for (Cookie cookie : cookies) {
-            	System.out.println(cookie.getName()+"="+cookie.getValue());
+            	System.out.println("cookie:"+cookie.getName()+"="+cookie.getValue());
                 if ("sso".equals(cookie.getName())) {
                 	jsessionid = cookie.getValue();
                     break;

@@ -17,8 +17,35 @@
         <servlet-name>list</servlet-name>
         <servlet-class>com.cloud.sso.oa.servlet.OAServlet</servlet-class>
     </servlet>
+  <servlet>
+    <servlet-name>loginPage</servlet-name>
+    <servlet-class>com.cloud.sso.oa.servlet.LoginPage</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>login</servlet-name>
+    <servlet-class>com.cloud.sso.oa.servlet.Login</servlet-class>
+  </servlet>
+  <servlet>
+    <servlet-name>logout</servlet-name>
+    <servlet-class>com.cloud.sso.oa.servlet.Logout</servlet-class>
+  </servlet>
+
+
+
     <servlet-mapping>
         <servlet-name>list</servlet-name>
         <url-pattern>/list</url-pattern>
     </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>loginPage</servlet-name>
+    <url-pattern>loginPage</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>login</servlet-name>
+    <url-pattern>/user/login</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>logout</servlet-name>
+    <url-pattern>/logout</url-pattern>
+  </servlet-mapping>
 </web-app>

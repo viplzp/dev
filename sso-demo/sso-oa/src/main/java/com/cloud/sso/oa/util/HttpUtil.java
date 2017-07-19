@@ -10,16 +10,17 @@
  *************************************************************************************/
 	
 
- package com.cloud.sso.pro.util;
+ package com.cloud.sso.oa.util;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.CookieStore;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.httpclient.HttpClient;
-import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
@@ -57,7 +58,10 @@ public class HttpUtil {
        PostMethod method = new PostMethod(url);
        method.addRequestHeader("Accept-Language", "zh-cn,zh;q=0.8,en-us;q=0.5,en;q=0.3");
        method.addRequestHeader("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
-       
+//       method.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY);
+//       client.getParams().setCookiePolicy(CookiePolicy.BROWSER_COMPATIBILITY); 
+//       client.getParams().setParameter("http.protocol.single-cookie-header", true); 
+
 /*       method.getParams().setCookiePolicy(CookiePolicy.IGNORE_COOKIES);
        method.getParams().setContentCharset("UTF-8");
 
@@ -76,18 +80,27 @@ public class HttpUtil {
 
        }
        try {
+            Cookie setcookie =new Cookie("localhost", "sso", "o54u7r5t5y1v8v4ycyhg0g6");
+            client.getState().addCookie(setcookie); 
             client.executeMethod(method);
-            
-            Cookie[] cookies = client.getState().getCookies(); 
-            for (Cookie cookie : cookies) {
-            	System.out.println("获取sso cookie:"+cookie);
-            	/*if ("sso".equals(cookie.getName())) {
-            		result.append(cookie.getValue());
-            		break;
-            	}			*/			
-            }
+//            client.getState().setCookiePolicy(0);
             if (method.getStatusCode() == HttpStatus.SC_OK) {
+                Cookie[] cookies = client.getState().getCookies(); 
+                for (Cookie cookie : cookies) {
+                	System.out.println("获取sso cookie:"+cookie);
+                	/*if ("sso".equals(cookie.getName())) {
+                		result.append(cookie.getValue());
+                		break;
+                	}			*/			
+                }
             	if("1".equals(outTyp)){
+            		/*Cookie[] cookies = client.getState().getCookies(); 
+            		for (Cookie cookie : cookies) {
+            			if ("sso".equals(cookie.getName())) {
+            				result.append(cookie.getValue());
+            				break;
+            			}						
+					}*/
             	}else{
             		BufferedReader reader = new BufferedReader(
             				new InputStreamReader(method.getResponseBodyAsStream(),
@@ -106,16 +119,7 @@ public class HttpUtil {
        }
        return result.toString();
   }
-    public static void main(String[] args) {
-    	TestHttpClient test=new TestHttpClient();
-		try {
-			test.testLogin();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-				
-		}
-	}
+   
 }
 
 	

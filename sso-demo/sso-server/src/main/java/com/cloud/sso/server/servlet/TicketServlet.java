@@ -2,6 +2,7 @@ package com.cloud.sso.server.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Map;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -24,6 +25,9 @@ public class TicketServlet extends HttpServlet {
         System.out.println("ticket:"+ticket);
         String username = JVMCache.TICKET_AND_NAME.get(ticket);
         JVMCache.TICKET_AND_NAME.remove(ticket);
+		/*for (Map.Entry<String, String> map: JVMCache.TICKET_AND_NAME.entrySet()) {
+			JVMCache.TICKET_AND_NAME.remove(map.getKey());
+		}*/
         System.out.println("JVMCache:"+JVMCache.TICKET_AND_NAME.toString());
         if(null!=username&&!"".equals(username)){
         	PrintWriter writer = response.getWriter();
