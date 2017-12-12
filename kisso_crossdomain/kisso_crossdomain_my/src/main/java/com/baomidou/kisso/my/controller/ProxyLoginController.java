@@ -50,7 +50,7 @@ public class ProxyLoginController extends BaseController {
 		 * 
 		 */
 		SSOProperties prop = SSOConfig.getSSOProperties();
-		
+		System.out.println(prop.get("sso.defined.my_private_key"));
 		//业务系统私钥签名 authToken 自动设置临时会话 cookie 授权后自动销毁
 		AuthToken at = SSOHelper.askCiphertext(request, response, prop.get("sso.defined.my_private_key"));
 		

@@ -39,7 +39,7 @@ public class IndexController extends BaseController {
 			/**
 			 * 重定向至代理跨域地址页
 			 */
-			return redirectTo("http://sso.test.com:8080/login.html?ReturnURL=http%3A%2F%2Fmy.web.com%3A8090%2Fproxylogin.html");
+			return redirectTo("http://sso.test.com:8080/login.html?ReturnURL=http%3A%2F%2Fmy.web.com%3A8091%2Fproxylogin.html");
 		} else {
 			model.addAttribute("userId", token.getUid());
 		}

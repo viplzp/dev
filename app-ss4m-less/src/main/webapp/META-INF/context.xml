@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context path="/">
+
+    <WatchedResource>WEB-INF/web.xml</WatchedResource>
+
+    <Resource name="jdbc/appdb" auth="Container" type="javax.sql.DataSource"
+              maxActive="10000" maxIdle="100" maxWait="10000" logAbandoned="true"
+              username="IOT" password="IOT" driverClassName="oracle.jdbc.driver.OracleDriver"
+              url="jdbc:oracle:thin:@10.45.47.93:1521:orcl" />
+
+    <Resource name="jdbc/reservedb" auth="Container" type="javax.sql.DataSource"
+              maxActive="10000" maxIdle="100" maxWait="10000" logAbandoned="true"
+              username="IOT" password="IOT" driverClassName="oracle.jdbc.driver.OracleDriver"
+              url="jdbc:oracle:thin:@10.45.47.93:1521:orcl" />
+
+    <Resource name="jdbc/logdb" auth="Container" type="javax.sql.DataSource"
+              maxActive="10000" maxIdle="100" maxWait="10000" logAbandoned="true"
+              username="IOT_LOG" password="IOT_LOG" driverClassName="oracle.jdbc.driver.OracleDriver"
+              url="jdbc:oracle:thin:@10.45.47.93:1521:orcl" />
+
+</Context>

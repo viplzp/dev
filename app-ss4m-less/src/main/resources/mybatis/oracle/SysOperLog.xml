@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace用于java代码调用时识别指定xml的mapper文件 -->
+<mapper namespace="SysOperLog">
+	<!-- 用来定义可重用的SQL代码段 -->
+	<!-- sql片段 -->
+	<sql id="baseColumnList">
+		LOG_ID,USER_ID,ACTION_TYPE,ACTION_DESC,RESULT_CODE,RESULT_MSG,CLIENT_IP,LOG_DATE
+	</sql>
+	<!-- 根据用户ID查询系统操作日志信息 -->
+	<select id="queryLogByUserId" parameterType="java.util.Map" resultType="SysOperLog">
+		SELECT
+		<include refid="baseColumnList"></include><!-- sql片段引入 -->
+		FROM SYS_OPER_LOG A WHERE 1=1
+		<if test="USER_ID != null and USER_ID != '' ">
+			AND A.USER_ID = #{USER_ID}
+		</if>
+	</select>
+	
+</mapper>

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace用于java代码调用时识别指定xml的mapper文件 -->
+<mapper namespace="User">
+	<!-- 用来定义可重用的SQL代码段 -->
+	<!-- sql片段 -->
+	<sql id="baseColumnList">
+		A.USER_ID,USER_NAME,EFF_DATE,EXP_DATE,CREATE_DATE,A.STATUS_CD,A.STATUS_DATE
+	</sql>
+	<!-- 根据用户名查询用户信息 -->
+	<select id="queryUserByUserName" parameterType="java.util.Map" resultType="User">
+		SELECT
+		<include refid="baseColumnList"></include><!-- sql片段引入 -->
+		FROM SYS_USER A WHERE 1=1 AND A.STATUS_CD ='1000'
+		<if test="USER_NAME != null and USER_NAME != '' ">
+			<choose>
+				<when test="caseSensitive !=null and caseSensitive != ''">
+					AND UPPER(A.USER_NAME) = #{USER_NAME}
+				</when>
+				<otherwise>
+					AND A.USER_NAME = #{USER_NAME}
+				</otherwise>
+			</choose>
+		</if>
+	</select>
+	
+</mapper>

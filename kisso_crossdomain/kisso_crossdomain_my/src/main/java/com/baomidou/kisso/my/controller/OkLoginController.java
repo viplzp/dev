@@ -52,7 +52,7 @@ public class OkLoginController extends BaseController {
 	@ResponseBody
 	@RequestMapping("/oklogin")
 	public void oklogin() {
-		String returl = "http://my.web.com:8090/timeout.html";
+		String returl = "http://my.web.com:8091/timeout.html";
 		/*
 		 * <p>
 		 * 回复密文是否存在
@@ -80,7 +80,7 @@ public class OkLoginController extends BaseController {
 			AuthToken at = SSOHelper.ok(request, response, replyTxt, prop.get("sso.defined.my_public_key"),
 				prop.get("sso.defined.sso_public_key"));
 			if (at != null) {
-				returl = "http://my.web.com:8090/index.html";
+				returl = "http://my.web.com:8091/index.html";
 				SSOToken st = new SSOToken();
 				st.setUid(at.getUid());
 				st.setTime(at.getTime());

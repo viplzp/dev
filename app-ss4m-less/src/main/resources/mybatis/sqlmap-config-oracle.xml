@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	
+	<!-- 配置 -->
+	<settings>
+		<setting name="jdbcTypeForNull" value="NULL" />
+		<setting name="logImpl" value="LOG4J" />
+	</settings>
+
+	<!-- 扫描model的包名 -->
+	<typeAliases>
+		<!-- 以下的代码都是样例，你可以阅读或者随意删除。 -->
+		<package name="demo.common.vo"></package>
+	</typeAliases>
+
+	<plugins>
+		<!-- 分页插件 -->
+		<plugin
+			interceptor="com.github.miemiedev.mybatis.paginator.OffsetLimitInterceptor">
+			<property name="dialectClass" value="com.github.miemiedev.mybatis.paginator.dialect.OracleDialect" />
+		</plugin>
+	</plugins>
+
+	<mappers>
+		<mapper resource="mybatis/oracle/User.xml" />
+		<mapper resource="mybatis/oracle/SysOperLog.xml" />
+	</mappers>
+
+</configuration>

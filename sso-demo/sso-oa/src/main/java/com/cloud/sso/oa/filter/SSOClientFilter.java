@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.httpclient.HttpClient;
+import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.httpclient.methods.PostMethod;
 
 import com.cloud.sso.oa.util.HttpUtil;
@@ -33,22 +34,25 @@ public class SSOClientFilter implements Filter {
         String username = (String) session.getAttribute("username");
         String ticket = request.getParameter("ticket");
         String url = URLEncoder.encode(request.getRequestURL().toString(), "UTF-8");
-    	String path = request.getContextPath();
-    	String basePath = request.getScheme() + "://"
-    			+ request.getServerName() + ":" + request.getServerPort()
-    			+ path + "/";
+        String key=request.getParameter("key");
         System.out.println("oa filter:username>"+username);
+        System.out.println("jessionid>"+request.getSession().getId());
+
         System.out.println("ticket->"+ticket+";url->"+url);
-        if (null == username&&url.indexOf("login")<0) {
+        if (null == username) {
             if (null != ticket && !"".equals(ticket)) {
-                PostMethod postMethod = new PostMethod("http://localhost:8081/sso/ticket");
-                postMethod.addParameter("ticket", ticket);
+                PostMethod method = new PostMethod("http://localhost:8081/sso/ticket");
+                method.addParameter("ticket", ticket);
                 HttpClient httpClient = new HttpClient();
                 try {
-                    httpClient.executeMethod(postMethod);
-                    username = postMethod.getResponseBodyAsString();
+                	method.addRequestHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:51.0) Gecko/20100101 Firefox/51.0");
+                	method.getParams().setCookiePolicy(CookiePolicy.IGNORE_COOKIES);
+                	method.setRequestHeader("Cookie", "special_cookie="+request.getSession().getId());
+
+                    httpClient.executeMethod(method);
+                    username = method.getResponseBodyAsString();
                     System.out.println("oa 获取用户名："+username);
-                    postMethod.releaseConnection();
+                    method.releaseConnection();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -56,21 +60,19 @@ public class SSOClientFilter implements Filter {
                     session.setAttribute("username", username);
                     filterChain.doFilter(request, response);
                 } else {
-					HttpUtil.sendPost(serverLogin, null, "UTF-8", "1");
-					String jumpUrl=basePath+"loginPage";
-					if(url.indexOf("loginPage")>0){
-			            filterChain.doFilter(request, response);
-					}else{
-						response.sendRedirect(jumpUrl+"?service=" + url);					
-					}
+    				if("sso".equals(key)||url.indexOf("user")>0){
+   					 filterChain.doFilter(request, response);
+	   				}else{
+	   					System.out.println("重定向到服务端："+serverLogin+"?service=" + url+"&typ=2");
+	   					response.sendRedirect(serverLogin+"?service=" + url+"&typ=2");					
+	   				}
                 }
             } else {
-            	HttpUtil.sendPost(serverLogin, null, "UTF-8", "1");
-				String jumpUrl=basePath+"loginPage";
-				if(url.indexOf("loginPage")>0){
-		            filterChain.doFilter(request, response);
+				if("sso".equals(key)||url.indexOf("user")>0){
+					 filterChain.doFilter(request, response);
 				}else{
-					response.sendRedirect(jumpUrl+"?service=" + url);					
+   					System.out.println("重定向到服务端："+serverLogin+"?service=" + url+"&typ=2");
+					response.sendRedirect(serverLogin+"?service=" + url+"&typ=2");					
 				}
             }
         } else {

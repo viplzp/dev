@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+	<!-- spring配置文件，主要存储业务层与持久层的Bean -->
+	
+	<!-- 主数据库-数据源配置 -->
+    <bean id="dataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName">
+            <!-- 主数据库 -->
+            <value>${DEFAULT_JNDI}</value>
+        </property>
+    </bean>
+    <!-- 后备数据库-数据源配置 -->
+    <bean id="reserveDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName">
+            <value>${RESERVE_JNDI}</value>
+        </property>
+    </bean>
+    
+    <!-- 动态数据源 -->
+    <bean class="io.flysium.framework.jdbc.datasource.lookup.DynamicDataSource" id="dataSource">  
+	    <property name="targetDataSources">   
+	       <map key-type="java.lang.String">   
+	           <!-- key与代码Consts.JNDI.DEFAULT_JNDI_NAME 切合 -->
+	           <entry value-ref="defaultDataSource" key="DEFAULT_JNDI"></entry>  
+	           <!-- key与代码Consts.JNDI.RESERVE_JNDI_NAME 切合 -->
+	           <entry value-ref="reserveDataSource" key="RESERVE_JNDI"></entry>  
+	       </map>
+	    </property>
+	    <property name="defaultTargetDataSource" ref="defaultDataSource" ></property>  
+	</bean>
+	
+</beans>

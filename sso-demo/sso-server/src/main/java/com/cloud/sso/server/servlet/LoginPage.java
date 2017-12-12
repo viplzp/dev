@@ -64,20 +64,24 @@ public class LoginPage extends HttpServlet {
 	 * @throws IOException if an error occurred
 	 */
 	public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
-		response.setContentType("text/html");
-		PrintWriter out = response.getWriter();
-		out.println("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">");
-		out.println("<HTML>");
-		out.println("  <HEAD><TITLE>A Servlet</TITLE></HEAD>");
-		out.println("  <BODY>");
-		out.print("    This is ");
-		out.print(this.getClass());
-		out.println(", using the POST method");
-		out.println("  </BODY>");
-		out.println("</HTML>");
-		out.flush();
-		out.close();
+        String service = request.getParameter("service");
+        String platTyp = request.getParameter("typ");
+        String clientUrl="http://m.zbd.com:8083/pro/loginPage";
+        if("2".equals(platTyp)){
+        	 clientUrl="http://www.zbd.com:8082/oa/loginPage";
+        }
+        StringBuilder url = new StringBuilder();
+		url.append(clientUrl);
+        if (0 <= service.indexOf("?")) {
+            url.append("&");
+        } else {
+            url.append("?");
+        }
+        url.append("service=").append(service);
+        url.append("&key=").append("sso");
+        System.out.println("重定向客户端登陆："+url);
+        response.sendRedirect(url.toString());
+        
 	}
 
 	/**

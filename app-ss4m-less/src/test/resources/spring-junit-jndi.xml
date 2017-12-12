@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="appJunitDataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="oracle.jdbc.OracleDriver" />
+		<property name="url" value="jdbc:oracle:thin:@10.45.47.93:1521:orcl" />
+		<property name="username" value="IOT" />
+		<property name="password" value="IOT" />
+	</bean>
+
+	<bean id="reserveJunitDataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="oracle.jdbc.OracleDriver" />
+		<property name="url" value="jdbc:oracle:thin:@10.45.47.93:1521:orcl" />
+		<property name="username" value="IOT" />
+		<property name="password" value="IOT" />
+	</bean>
+
+	<bean id="logJunitDataSource"
+		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="oracle.jdbc.OracleDriver" />
+		<property name="url" value="jdbc:oracle:thin:@10.45.47.93:1521:orcl" />
+		<property name="username" value="IOT_LOG" />
+		<property name="password" value="IOT_LOG" />
+	</bean>
+
+</beans>  

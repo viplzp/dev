@@ -1,0 +1,117 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<head lang="en">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>JSONP Demo</title>
+</head>
+<body>
+	<form id="demo_form">
+		<table>
+			<tr>
+				<td>跨域：</td>
+				<td><textarea id="input_server_url" type="text" name="server" rows="1" cols="70" >http://127.0.0.1:8081/app-ss4m/JSONPDemoController/sayHi.do</textarea></td>
+			</tr>
+			<tr>
+				<td>appId：</td>
+				<td><textarea id="input_appid" type="text" name="server" rows="1" cols="70" >1000</textarea></td>
+			</tr>
+			<tr>
+				<td>appsecret：</td>
+				<td><textarea id="input_appsecret" type="text" name="server" rows="1" cols="70" >A6E454315154DE4D54B1820525190899</textarea></td>
+			</tr>
+			<tr>
+				<td>JSONP请求内容：</td>
+				<td><textarea id="request_str" rows="5" cols="70" >{"name":"SvenAugustus","code":"test"}</textarea></td>
+			</tr>
+			<tr>
+				<td>JSONP响应内容：</td>
+				<td><textarea id="responese_str" rows="5" cols="70"></textarea></td>
+			</tr>
+			<tr>
+				<td></td>
+				<td><input type="button" value="提交" id="btn"></input></td>
+			</tr>
+		</table>
+	</form>
+</body>
+<script type="text/javascript" src="../../static/js/Utils.js"></script><!-- 依赖 -->
+<script type="text/javascript" src="../../static/lib/jquery.min.js"></script><!-- 依赖 -->
+<script type="text/javascript" src="../../static/lib/json2.js"></script><!-- 可选 -->
+<script type="text/javascript" src="../../static/lib/layer/layer.js"></script><!-- 可选 -->
+<script type="text/javascript" src="../../static/js/Invoker.js"></script>
+<script type="text/javascript" src="../../static/lib/md5.min.js"></script><!-- md5加密 -->
+<script type="text/javascript">
+    $(function() {
+	    $("#btn").click(function() {
+	    	var server_url = $('#input_server_url').val().trim();
+	    	var appid = $('#input_appid').val().trim();
+	    	var appsecret = $('#input_appsecret').val().trim();
+	    	var request_str = $("#request_str").val().trim();
+    		//var params = {name:"SvenAugustus"};
+    		var params = JSON.parse(request_str);
+    		params.timestamp=(new Date()).valueOf();
+    		params.appid=appid;
+    		var sign=signature(params,appsecret);
+			params.sign=sign;
+		
+    		//以下为其他应用模拟调用本应用
+		    $.ajax({
+		        url : server_url ,
+		        async: true,
+		        timeout : 5000,
+		        data : params,
+		        dataType : "jsonp",
+		        jsonp: 'callbackparam',//传递给请求处理程序或页面的，用以获得jsonp回调函数名的参数名(一般默认为:callback)
+		        //本应用的参数名为 callbackparam
+		        jsonpCallback : "myCallBack", //需要的回调函数
+		        success : function(data) {
+		        	//debugger;
+		        	/* if(data.res_code == "00000"){
+				    	//data.res_message
+					}else{
+						//alert(data.res_message);
+					} */
+					$("#responese_str").val(JSON.stringify(data));
+		        },
+		        error : function(data) {
+			        //Utils.alert("fail");
+			        $("#responese_str").val(JSON.stringify(data));
+		        }
+		    });
+	    });
+    });
+    function myCallBack(data) {
+       Utils.alert('Hi,'+((data.result)?data.result.yourname:'NULL')+'.Welcome to JSONP（JSON with Padding）.');
+    };
+    
+    function keysrt(key,desc) {//desc true：按key排序；false：按值排序；
+	  return function(a,b){
+	    return desc ? ~~(a[key] < b[key]) : ~~(a[key] > b[key]);
+	  }
+	}
+
+    function getSignContent(params,appsecret){
+    	var a = [];
+    	$.each(params, function(key, val) { 
+    		a.push(key); 
+    	});  
+    	a.sort();
+    	var s = '';
+	    	if(a.length>0){
+	    	 $.each(a, function(i, key) {  
+		       s+= (key+"="+params[key]+'&');
+		    });
+		    s +='&appsecret=' + appsecret;
+    	}
+	    return s;
+    }
+    
+    function signature(params, appsecret){
+    	var content = getSignContent(params, appsecret);
+    	//alert(content);
+		return md5(content);// md5.min.js
+    }
+    
+</script>
+</html>
+

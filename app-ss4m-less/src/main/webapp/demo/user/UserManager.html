@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<head lang="en">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>User Manager</title>
+</head>
+<body>
+		<div class="from-list-hd text-left">
+			<input type="text" placeholder="请输入用户名" id="search_input"></input>
+			<button type="button" id="add_btn"><i class="add-small-ico mr5"></i>查询</button>
+		</div>
+	    <table id="tab_template" style="display:none;">
+	    	<tr id="tr_template">
+				<td fieldType='db' dbfield="user_name"></td>
+				<td fieldType='db' dbfield="eff_date"></td>
+				<td fieldType='db' dbfield="exp_date"></td>
+				<td fieldType='db' dbfield="create_date"></td>
+				<td>
+					<a href="javascript:void(0);" id="delete_detail" style="color:blue;margin-left:10px;">停用</a>
+				</td>
+			</tr>
+	    </table>
+		<table id="data_list">
+			<tr>
+				<th>用户名</th>
+				<th>生效时间</th>
+				<th>失效时间</th>
+				<th>创建时间</th>
+				<th>操作</th>
+			</tr>
+		</table>
+		<div>
+			<div>
+				<div id="navPage"></div>
+			</div>
+		</div>
+			
+</body>
+<script type="text/javascript" src="../../static/js/Utils.js"></script><!-- 依赖 -->
+<script type="text/javascript" src="../../static/lib/jquery.min.js"></script><!-- 依赖 -->
+<script type="text/javascript" src="../../static/lib/json2.js"></script><!-- 可选 -->
+<script type="text/javascript" src="../../static/lib/layer/layer.js"></script><!-- 可选 -->
+<script type="text/javascript" src="../../static/js/Invoker.js"></script>
+<!-- 以下为可选组件 -->
+<script type="text/javascript" src="../../static/js/Base.js"></script>
+<script type="text/javascript" src="../../static/js/WYUtil.js"></script><!-- 表格数据填充操控 -->
+<script type="text/javascript" src="../../static/lib/laypage/laypage.js"></script><!-- 多场景JavaScript分页组件 -->
+<script type="text/javascript" src="js/UserManager.js"></script>
+</html>
+

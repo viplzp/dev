@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+	<!-- spring配置文件，主要存储业务层与持久层的Bean -->
+	
+	<!-- 日志数据库-数据源配置 -->
+    <bean id="logDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName">
+            <value>${LOG_JNDI}</value>
+        </property>
+    </bean> 
+	
+	<!-- 配置mybatis sqlSessionFactory -->
+    <bean id="logSqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="logDataSource" />
+        <property name="configLocation" value="classpath:mybatis/sqlmap-config-${LOG_DBTYPE}.xml" />
+    </bean>
+    <bean id="logSqlSessionTemplate" class="org.mybatis.spring.SqlSessionTemplate">
+        <constructor-arg index="0" ref="logSqlSessionFactory" />
+    </bean> 
+
+	<!-- 事务管理器配置 -->
+    <bean id="logDataSourceProxy" class="org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy">
+		<property name="targetDataSource" ref="logDataSource" />
+	</bean>
+	<!-- <bean id="logJdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<constructor-arg ref="logDataSourceProxy" />
+	</bean> -->
+	<bean id="logTansactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="logDataSourceProxy" />
+	</bean>
+    <!-- 开启事务注解方式注入 -->
+	<tx:advice id="logTxAdvice" transaction-manager="logTansactionManager">
+        <tx:attributes>
+            <tx:method name="*" propagation="REQUIRED" rollback-for="Exception" />
+        </tx:attributes>
+    </tx:advice>
+    <!-- 事务在@LogTransactional注解方法中起作用 -->
+	<aop:config>
+		<aop:pointcut id="logTxOperation" expression="@annotation(io.flysium.framework.transaction.annotation.LogTransactional)" />
+		<aop:advisor advice-ref="logTxAdvice" pointcut-ref="logTxOperation" />
+	</aop:config><!-- 需要spring aop 及 aspectj框架 -->
+	
+</beans>

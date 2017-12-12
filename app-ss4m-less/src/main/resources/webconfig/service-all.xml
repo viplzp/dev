@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
+<beans default-autowire="byName" default-lazy-init="false">
+
+	<!-- 此配置加载所有服务模块，一般为开发者使用 -->
+	<import resource="classpath*:spring/spring-config.xml" /><!-- spring基础配置 + 管理数据库 -->
+	<import resource="classpath*:spring/logdb-config.xml" /><!-- 日志数据库 -->
+	<import resource="classpath*:spring/spring-session.xml" /><!-- 分布式session解决方案-->
+
+</beans>

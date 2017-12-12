@@ -33,7 +33,7 @@ public class BaseController {
 	@Autowired
 	protected HttpServletRequest request;
 	
-	@Autowired
+	@Autowired(required=false)
 	protected HttpServletResponse response;
 
 	protected String redirectTo( String url ) {

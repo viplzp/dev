@@ -76,6 +76,7 @@ public class LoginController extends BaseController {
 			 * 登录需要跳转登录前页面，自己处理 ReturnURL 使用 
 			 * HttpUtil.decodeURL(xx) 解码后重定向
 			 */
+			System.out.println("登录成功");
 			return redirectTo("/index.html");
 		}
 		return "login";

@@ -1,0 +1,132 @@
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" 
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:util="http://www.springframework.org/schema/util" 
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+		http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+	<!-- 默认的mvc注解映射的支持 默认注入RequestMappingHandlerMapping和RequestMappingHandlerAdapter，这里如果自定义HandlerMapping 或 HandlerAdapter 就不要写-->
+	<!-- <mvc:annotation-driven /> -->
+
+	<!-- 自动扫描类包，将标志Spring注解的类自动转化为Bean，同时完成Bean的注入 -->
+	<!-- 扫描控制器 -->
+	<context:component-scan base-package="io.flysium" use-default-filters="false">
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+		<context:include-filter type="annotation" expression="org.springframework.web.bind.annotation.RestController" />
+		<context:include-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice" />
+	</context:component-scan>
+
+	<!-- 1、多部分请求解析器（MultipartResolver）配置，与上传文件有关 需要类库commons-io、commons-fileupload -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="defaultEncoding" value="utf-8"></property><!-- 默认编码-->
+		<property name="maxUploadSize" value="104857600"></property><!-- 文件大小最大值-->
+		<property name="maxInMemorySize" value="40960"></property><!-- 内存中的最大值-->
+	</bean>
+	
+	<!-- 2、本地化（LocaleResolver）配置 -->
+	<!-- <bean id="localeResolver" class="org.springframework.web.servlet.i18n.FixedLocaleResolver"> 
+		</bean> -->
+
+	<!-- 3、主题解析器（ThemeResolver）配置 -->
+	<!-- <bean id="themeResolver" class="org.springframework.web.servlet.theme.FixedThemeResolver"> 
+		</bean> -->
+
+	<!-- 4、处理器映射器（HandlerMapping）配置，可以配置多个 -->
+	<!-- order 优先级，越小越高  -->
+	<!--  BeanNameUrlHandlerMapping ：通过对比url和bean的name找到对应的对象  -->
+	<!--  SimpleUrlHandlerMapping ：也是直接配置url和对应bean,比BeanNameUrlHandlerMapping功能更多   -->
+	<!--  DefaultAnnotationHandlerMapping : 主要是针对注解配置@RequestMapping的，已过时   -->
+	<!--  RequestMappingHandlerMapping ：取代了上面一个  -->
+	<!-- 自定义 -->
+	<bean id="handlerMapping" class="io.flysium.framework.web.servlet.mvc.method.annotation.CustomHandlerMapping">
+		<property name="order" value="-1" />
+	</bean> 
+
+	<!-- 5、处理器适配器（HandlerAdapter）配置，可以配置多个 -->
+	<!-- messageConverters 映射前台传参与handler处理方法参数 -->
+	<!--  HttpRequestHandlerAdapter ： 要求handler实现HttpRequestHandler接口，该接口的方法为 void handleRequest(HttpServletRequest request, HttpServletResponse response)也就是  handler必须有一个handleRequest方法  --> 
+	<!--  SimpleControllerHandlerAdapter：要求handler实现Controller接口，该接口的方法为ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response)  --> 
+	<!--  AnnotationMethodHandlerAdapter ：和上面的DefaultAnnotationHandlerMapping配对使用的，也已过时   --> 
+	<!--  RequestMappingHandlerAdapter : 和上面的RequestMappingHandlerMapping配对使用，针对@RequestMapping  --> 
+	<!-- 自定义 -->
+	<bean id="handlerAdapter" class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+		<property name="order" value="-1" />
+		<property name="messageConverters">
+			<list>
+				 <!--  <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter" /> -->
+               <ref bean="mappingJacksonHttpMessageConverter" />
+			</list>
+		</property>
+		<property name="webBindingInitializer">  
+            <bean class="org.springframework.web.bind.support.ConfigurableWebBindingInitializer">  
+                <property name="conversionService">  
+                     <!-- 针对普通请求(非application/json) 前台的日期字符串与后台的Java Date对象转化,此情况,应使用spring mvc本身的内置日期处理 -->
+                     <!-- 可以在VO属性上加注解：@DateTimeFormat 需要类库joda-time -->
+                     <bean class="org.springframework.format.support.FormattingConversionServiceFactoryBean"></bean>  
+                </property>  
+            </bean>  
+        </property> 
+	</bean>
+	<!-- json请求(application/json)返回值Date转String，全局配置 -->
+	<bean name="jacksonObjectMapper" class="org.springframework.http.converter.json.Jackson2ObjectMapperFactoryBean">
+	    <property name="featuresToDisable">
+	        <array>
+	            <util:constant static-field="com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS"/>
+	        </array>
+	    </property>
+	    <!-- 如果想自定义，可以在VO属性上加注解：@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = Consts.DATE_PATTERN.DATE_PATTERN_OBLIQUE,timezone = "GMT+8") -->
+	    <property name="simpleDateFormat"><value>yyyy-MM-dd HH:mm:ss</value></property>
+	</bean>
+	<!--避免IE执行Ajax时，返回JSON出现下载文件 -->
+	<!-- 自定义 -->
+	<bean id="mappingJacksonHttpMessageConverter" class="io.flysium.framework.http.converter.json.CustomJackson2HttpMessageConverter">
+		<property name="objectMapper" ref="jacksonObjectMapper"/>
+		<property name="supportedMediaTypes">
+			<list>
+				<value>text/html;charset=UTF-8</value>
+				<value>application/json;charset=UTF-8</value>
+			</list>
+		</property>
+	</bean>
+	<!-- 自定义请求参数通知器 -->
+	<bean id="customRequestBodyAdvice" class="io.flysium.framework.web.servlet.mvc.method.annotation.CustomRequestBodyAdvice"></bean>
+	<!-- JSONP响应参数通知器 -->
+	<bean id="jsonpRequestBodyAdvice" class="io.flysium.framework.web.servlet.mvc.method.annotation.JSONPResponseBodyAdvice"></bean>
+
+	<!-- 6、处理器异常解析器（HandlerExceptionResolver）配置，可以配置多个 -->
+	<bean id="handlerExceptionResolver" class="io.flysium.framework.web.servlet.handler.CustomHandlerExceptionResolver"><!-- 自定义 -->
+		<!-- 设置日志输出级别，不定义则默认不输出警告等错误日志信息 -->
+		<property name="warnLogCategory" value="WARN" />
+	</bean>
+
+	<!-- 7、请求到视图名翻译器（RequestToViewNameTranslator）配置 -->
+	<!-- RequestToViewNameTranslator可以在处理器返回的View为空时使用它根据Request获得viewName。 -->
+	<!-- <bean id="viewNameTranslator" class="org.springframework.web.servlet.view.DefaultRequestToViewNameTranslator"> 
+		</bean> -->
+		
+	<!-- 8、视图解析器（ViewResolver）配置，可以配置多个 -->
+	<!-- 定义跳转的文件的前后缀 ，视图模式配置 -->
+	<!-- 主要针对@Controller返回ModelAndView的视图路径解析 -->
+	<!-- 自动给后面控制器的方法return的字符串 加上前缀和后缀，变成一个 可用的url地址 -->
+	<!-- viewClass：JstlView表示JSP模板页面需要使用JSTL标签库，classpath中必须包含jstl的相关jar包； -->
+	<bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="/" />
+		<property name="suffix" value=".jsp" />
+		<property name="viewClass" value="org.springframework.web.servlet.view.JstlView" />
+	</bean>
+	
+	<!-- 以下的代码都是样例，你可以阅读或者随意删除。 -->
+	<!-- 自动扫描类包，将标志Spring注解的类自动转化为Bean，同时完成Bean的注入 -->
+	<context:component-scan base-package="demo" use-default-filters="false">
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+		<context:include-filter type="annotation" expression="org.springframework.web.bind.annotation.RestController" />
+		<context:include-filter type="annotation" expression="org.springframework.web.bind.annotation.ControllerAdvice" />
+	</context:component-scan>
+
+</beans>

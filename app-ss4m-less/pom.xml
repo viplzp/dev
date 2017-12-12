@@ -1,0 +1,433 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>io.flysium</groupId>
+	<artifactId>app-ss4m-less</artifactId>
+	<packaging>war</packaging>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>The appframework build with SpringFramework 4.x and Spring MVC 4.x and mybatis 3.x</name>
+	<url>http://maven.apache.org</url>
+
+	<organization>
+		<name>flysium</name>
+		<url>http://www.flysium.io</url>
+	</organization>
+	<licenses>
+		<license>
+			<name>BSD License</name>
+			<url>http://www.opensource.org/licenses/bsd-license.php</url>
+		</license>
+	</licenses>
+	<scm>
+		<url>https://github.com/SvenAugustus/app-ss4m</url>
+		<connection>https://github.com/SvenAugustus/app-ss4m.git</connection>
+	</scm>
+	<developers>
+		<developer>
+			<id>SvenAugustus</id>
+			<name>Sven Augustus</name>
+			<email>SvenAugustus@outlook.com</email>
+		</developer>
+	</developers>
+
+	<properties>
+		<java.version>1.7</java.version><!-- JDK版本 -->
+		<maven.plugins.version>3.3</maven.plugins.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<!-- J2EE -->
+		<servlet-api.version>3.1.0</servlet-api.version>
+		<jsp-api.version>2.2.1</jsp-api.version>
+		<jstl.version>1.2</jstl.version>
+		<apache-jstl-impl.version>1.1.2</apache-jstl-impl.version>
+		<!-- 框架 -->
+		<springframework.version>4.2.9.RELEASE</springframework.version><!-- SpringFramework -->
+		<mybatis.version>3.2.8</mybatis.version><!-- mybaits -->
+		<mybatis-spring.version>1.2.2</mybatis-spring.version>
+		<mybatis.paginator.version>1.2.15</mybatis.paginator.version>
+		<aspectj.version>1.8.5</aspectj.version><!-- 面向切面框架AspectJ -->
+		<!-- 数据库驱动 -->
+		<ojdbc14_g.version>10.2.0.5.0</ojdbc14_g.version>
+		<!-- 分布式缓存 -->
+		<spring-redis.version>1.7.8.RELEASE</spring-redis.version><!--  Spring Data Redis 集成--><!-- 1.7.8版本需要： jdk6+  Spring Framework 4.2.9.RELEASE+ redis2.6x+    Spring Data Redis is currently tested against the latest 3.0 release. -->
+		<redis-cli-jedis.version>2.8.2</redis-cli-jedis.version><!-- Redis Java客户端 jedis客户端2.8.1版本需要 redis2.8x+ -->
+		<!-- <redis-cli-lettuce.version>3.5.0.Final</redis-cli-lettuce.version> --><!-- Redis Java客户端 Lettuce客户端4.x 需要 jdk8 --><!-- Lettuce是一个可伸缩线程安全的Redis客户端。多个线程可以共享同一个RedisConnection。它利用优秀netty NIO框架来高效地管理多个连接。  -->
+		<!-- 分布式session解决方案 -->
+		<spring-session-redis.version>1.2.2.RELEASE</spring-session-redis.version>
+		<!-- jackson -->
+		<jackson.version>2.5.2</jackson.version>
+		<fastjson.version>1.2.30</fastjson.version>
+		<!-- 常用工具 -->
+		<commons.lang.version>2.6</commons.lang.version>
+		<commons-io.version>2.4</commons-io.version>
+		<commons.beanutils.version>1.9.2</commons.beanutils.version>
+		<commons.collections.version>3.2.2</commons.collections.version>
+		<commons.codec.version>1.10</commons.codec.version>
+		<commons.fileupload.version>1.3.1</commons.fileupload.version>
+		<!-- 日期和时间库 -->
+		<joda-time.version>2.1</joda-time.version><!-- joda-time类库 -->
+		<!-- FTP工具 -->
+		<commons.net.version>1.4.1</commons.net.version>
+		<jcraft-jsch.version>0.1.50</jcraft-jsch.version>
+		<!-- 日志 -->
+		<commons-logging.version>1.2</commons-logging.version>
+		<slf4j.version>1.7.9</slf4j.version>
+		<log4j.version>1.2.17</log4j.version><!-- log4j日志文件管理包版本 -->
+		<!-- 测试 -->
+		<junit.version>4.12</junit.version>
+	</properties>
+
+	<dependencies>
+		<!-- J2EE -->
+		<!-- <dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.5</version>
+			<scope>provided</scope>
+		</dependency> --><!-- 3.1 之前的 Servlet API 构件 -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<version>${servlet-api.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- <dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jsp-api</artifactId>
+			<version>2.0</version>
+			<scope>provided</scope>
+		</dependency> -->
+		<!-- <dependency>
+			<groupId>javax.servlet.jsp</groupId>
+			<artifactId>jsp-api</artifactId>
+			<version>2.1</version>
+			<scope>provided</scope>
+		</dependency> -->
+		<dependency>
+			<groupId>javax.servlet.jsp</groupId>
+			<artifactId>javax.servlet.jsp-api</artifactId>
+			<version>${jsp-api.version}</version>
+			<scope>provided</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>javax.servlet</groupId>
+					<artifactId>javax.servlet-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<version>${jstl.version}</version>
+			<type>jar</type>
+			<scope>compile</scope>
+			<exclusions>
+				<exclusion>
+			      <groupId>javax.servlet</groupId>
+			      <artifactId>jsp-api</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>taglibs</groupId>
+			<artifactId>standard</artifactId>
+			<version>${apache-jstl-impl.version}</version>
+		</dependency>
+		<!-- spring框架 -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${springframework.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-beans</artifactId>
+			<version>${springframework.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>${springframework.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<version>${springframework.version}</version>
+		</dependency>
+		<!-- mybatis框架 -->
+		<dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis</artifactId>
+			<version>${mybatis.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis-spring</artifactId>
+			<version>${mybatis-spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.github.miemiedev</groupId>
+			<artifactId>mybatis-paginator</artifactId>
+			<version>${mybatis.paginator.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>mybatis</artifactId>
+					<groupId>org.mybatis</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>slf4j-api</artifactId>
+					<groupId>org.slf4j</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- 面向切面框架AspectJ -->
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+			<version>${aspectj.version}</version>
+		</dependency>
+		<!-- 数据库驱动 -->
+		<dependency>
+			<groupId>com.oracle</groupId>
+			<artifactId>ojdbc14_g</artifactId>
+			<version>${ojdbc14_g.version}</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/src/main/webapp/WEB-INF/lib/ojdbc14_g-${ojdbc14_g.version}.jar</systemPath>
+		</dependency>
+		<!-- 分布式缓存 -->
+		<dependency>
+	      <groupId>redis.clients</groupId>
+	      <artifactId>jedis</artifactId>
+	      <version>${redis-cli-jedis.version}</version>
+	      <scope>compile</scope>
+	    </dependency>
+	    <!-- <dependency>
+		  <groupId>biz.paluch.redis</groupId>
+		  <artifactId>lettuce</artifactId>
+		  <version>${redis-cli-lettuce.version}</version>
+		</dependency> -->
+	    <dependency>
+	      <groupId>org.springframework.data</groupId>
+	      <artifactId>spring-data-redis</artifactId>
+	      <version>${spring-redis.version}</version>
+	      <scope>compile</scope>
+	      <exclusions>
+	        <exclusion>
+	          <artifactId>slf4j-api</artifactId>
+	          <groupId>org.slf4j</groupId>
+	        </exclusion>
+	        <exclusion>
+	          <artifactId>jcl-over-slf4j</artifactId>
+	          <groupId>org.slf4j</groupId>
+	        </exclusion>
+	      </exclusions>
+    	</dependency>
+    	<!-- 分布式session解决方案： Spring session -->
+    	<dependency>
+		    <groupId>org.springframework.session</groupId>
+		    <artifactId>spring-session-data-redis</artifactId>
+		    <version>${spring-session-redis.version}</version>
+		    <exclusions>
+				<exclusion>
+					<groupId>org.springframework.data</groupId>
+	     			<artifactId>spring-data-redis</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>redis.clients</groupId>
+      				<artifactId>jedis</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- jackson -->
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+			<version>${jackson.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>${jackson.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>jackson-core</artifactId>
+					<groupId>com.fasterxml.jackson.core</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>jackson-annotations</artifactId>
+					<groupId>com.fasterxml.jackson.core</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.alibaba</groupId>
+			<artifactId>fastjson</artifactId>
+			<version>${fastjson.version}</version>
+		</dependency>
+		<!-- 常用工具 -->
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>${commons.lang.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>${commons-io.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<version>${commons.beanutils.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				</exclusion>
+				<exclusion>
+					<artifactId>commons-collections</artifactId>
+					<groupId>commons-collections</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>commons-collections</groupId>
+			<artifactId>commons-collections</artifactId>
+			<version>${commons.collections.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>${commons.codec.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-fileupload</groupId>
+			<artifactId>commons-fileupload</artifactId>
+			<version>${commons.fileupload.version}</version>
+			<exclusions>
+				<exclusion>
+					<artifactId>commons-io</artifactId>
+					<groupId>commons-io</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<!-- 日期和时间库 -->
+		<dependency>
+			<groupId>joda-time</groupId>
+    		<artifactId>joda-time</artifactId>
+			<version>${joda-time.version}</version>
+		</dependency>
+		<!-- ftp -->
+		<dependency>
+			<groupId>commons-net</groupId>
+			<artifactId>commons-net</artifactId>
+			<version>${commons.net.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<!-- sftp -->
+		<dependency>
+			<groupId>com.jcraft</groupId>
+			<artifactId>jsch</artifactId>
+			<version>${jcraft-jsch.version}</version>
+			<scope>compile</scope>
+		</dependency>
+		<!-- 日志 -->
+		<dependency>
+		    <groupId>commons-logging</groupId>
+		    <artifactId>commons-logging</artifactId>
+		    <version>${commons-logging.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>${slf4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>${log4j.version}</version>
+		</dependency>
+		<!-- 测试 -->
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-test</artifactId>
+		    <version>${springframework.version}</version>
+		    <scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<finalName>app-ss4m-less</finalName>
+		<pluginManagement>
+			<plugins>
+				<!-- 编译插件 -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>${maven.plugins.version}</version>
+					<configuration>
+						<source>${java.version}</source>
+						<target>${java.version}</target>
+						<encoding>${project.build.sourceEncoding}</encoding>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>${maven.plugins.version}</version>
+					<configuration>
+					</configuration>
+					<executions>
+						<execution>
+							<id>javadoc-jar</id>
+							<phase>package</phase>
+							<goals>
+								<goal>jar</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+				<!--<targetPath>META-INF</targetPath>-->
+			</resource>
+		</resources>
+	</build>
+
+</project>

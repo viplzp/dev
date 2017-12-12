@@ -31,6 +31,7 @@ public class SSOServerFilter implements Filter {
         System.out.println("ticket->"+ticket);
         System.out.println("url->"+request.getRequestURL());
         System.out.println("cookies:"+cookies.length);
+        System.out.println("jessionid:"+request.getSession().getId());
         String jsessionid = "";
         if (null != cookies) {
             for (Cookie cookie : cookies) {

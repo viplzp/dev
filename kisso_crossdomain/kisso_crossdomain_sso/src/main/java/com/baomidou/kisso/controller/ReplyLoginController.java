@@ -63,6 +63,7 @@ public class ReplyLoginController extends BaseController {
 				SSOProperties prop = SSOConfig.getSSOProperties();
 				
 				//下面开始验证票据，签名新的票据每一步都必须有。
+				System.out.println("密文位数："+askData);
 				AuthToken at = SSOHelper.replyCiphertext(request, askData);
 				if (at != null) {
 					

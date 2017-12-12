@@ -21,6 +21,7 @@ import org.apache.commons.httpclient.Cookie;
 import org.apache.commons.httpclient.HttpClient;
 import org.apache.commons.httpclient.HttpException;
 import org.apache.commons.httpclient.HttpStatus;
+import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.httpclient.methods.PostMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
  /**
@@ -57,12 +58,9 @@ public class HttpUtil {
        PostMethod method = new PostMethod(url);
        method.addRequestHeader("Accept-Language", "zh-cn,zh;q=0.8,en-us;q=0.5,en;q=0.3");
        method.addRequestHeader("Content-Type", "application/x-www-form-urlencoded;charset=UTF-8");
-       
-/*       method.getParams().setCookiePolicy(CookiePolicy.IGNORE_COOKIES);
-       method.getParams().setContentCharset("UTF-8");
-
-       method.setRequestHeader("Cookie", "special-cookie=value");*/
-    //   method.setRequestHeader("Charset", "UTF-8");
+       method.addRequestHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; WOW64; rv:51.0) Gecko/20100101 Firefox/51.0");
+       method.getParams().setCookiePolicy(CookiePolicy.IGNORE_COOKIES);
+       method.setRequestHeader("Cookie", "special_cookie=value");
        // 设置Http Post数据
        if (params != null) {
             HttpMethodParams p = new HttpMethodParams();

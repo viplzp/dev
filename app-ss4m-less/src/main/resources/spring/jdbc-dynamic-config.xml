@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+	<!-- spring配置文件，主要存储业务层与持久层的Bean -->
+	
+	<!-- 主数据库-数据源配置 -->
+    <bean id="defaultDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName">
+            <!-- 主数据库 -->
+            <value>${DEFAULT_JNDI}</value>
+        </property>
+    </bean>
+    <!-- 后备数据库-数据源配置 -->
+    <bean id="reserveDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName">
+            <value>${RESERVE_JNDI}</value>
+        </property>
+    </bean>
+    
+    <!-- 动态数据源 -->
+    <bean class="io.flysium.framework.jdbc.datasource.lookup.DynamicDataSource" id="dataSource">  
+	    <property name="targetDataSources">   
+	       <map key-type="java.lang.String">   
+	           <!-- key与代码Consts.JNDI.DEFAULT_JNDI_NAME 切合 -->
+	           <entry value-ref="defaultDataSource" key="DEFAULT_JNDI"></entry>  
+	           <!-- key与代码Consts.JNDI.RESERVE_JNDI_NAME 切合 -->
+	           <entry value-ref="reserveDataSource" key="RESERVE_JNDI"></entry>  
+	       </map>
+	    </property>
+	    <property name="defaultTargetDataSource" ref="defaultDataSource" ></property>  
+	</bean>
+	
+	<!-- 开启AOP监听 只对当前配置文件有效 -->
+	<aop:aspectj-autoproxy expose-proxy="true" />
+    <!-- 切面：容灾情况，主数据库自动切换到后备数据库 -->
+    <bean id="aspectJ4DataSourceSwitch" class="io.flysium.framework.jdbc.datasource.support.AspectJ4DataSourceSwitch"/>
+    <aop:config>
+    	<!-- Spring中的事务是通过aop来实现的，如果事务在前，数据源切换在后，会导致数据源切换失效，所以order设置在Spring事务aop之前 -->
+    	<!-- 注：Spring事务aop的order在tx:annotation-driven可以配置 -->
+        <aop:aspect id="dataSourceCut" ref="aspectJ4DataSourceSwitch" order="-1"><!-- 切面类 -->
+        	 <!-- 配置切入点 -->
+            <aop:pointcut expression="execution(* io.flysium.framework..*.service.*.*(..))" id="dataSourceCutPoint"/>
+            <!-- 切面执行方法 -->
+            <aop:before pointcut-ref="dataSourceCutPoint" method="before"/>
+            <aop:around pointcut-ref="dataSourceCutPoint" method="doAround"/>
+            <!-- 以下的代码都是样例，你可以阅读或者随意删除。 -->
+            <aop:pointcut expression="execution(* demo..*.service.*.*(..))" id="demoDataSourceCutPoint"/>
+            <aop:before pointcut-ref="demoDataSourceCutPoint" method="before"/>
+            <aop:around pointcut-ref="demoDataSourceCutPoint" method="doAround"/>
+        </aop:aspect>
+    </aop:config>
+	
+</beans>

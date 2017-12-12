@@ -100,7 +100,28 @@
 		
 	</dependencies>
 
-	<build>
+		<build>
 		<finalName>kisso_springmvc</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.mortbay.jetty</groupId>
+				<artifactId>jetty-maven-plugin</artifactId>
+				<version>8.1.9.v20130131</version>
+				<configuration>
+					<stopKey>stop</stopKey>
+					<stopPort>6003</stopPort>
+					<webAppConfig>
+						<contextPath></contextPath>
+					</webAppConfig>
+					<scanIntervalSeconds>4</scanIntervalSeconds>
+					<connectors>
+						<connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">
+							<port>8092</port>
+							<maxIdleTime>60000</maxIdleTime>
+						</connector>
+					</connectors>
+				</configuration>
+			</plugin>
+		</plugins>
 	</build>
 </project>

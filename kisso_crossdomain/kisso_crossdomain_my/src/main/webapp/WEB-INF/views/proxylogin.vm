@@ -16,7 +16,7 @@
 	    var ajaxCall = jQuery.getJSON(askurl + "?callback=?", {askData:askData}, function(d){
 	    	killAjax = false;
 	    	if(d.msg == "-1"){
-		    	window.location.href = "http://sso.test.com:8080/login.html?ReturnURL=http%3A%2F%2Fmy.web.com%3A8090%2Fproxylogin.html";
+		    	window.location.href = "http://sso.test.com:8080/login.html?ReturnURL=http%3A%2F%2Fmy.web.com%3A8091%2Fproxylogin.html";
 	    	}else{
 	    		$.post(okurl, {replyTxt:d.msg} , function(e) {
 		    		window.location.href = e.returl;
@@ -26,7 +26,7 @@
 	    function checkajaxkill(){
 	        if(killAjax){
 	        	ajaxCall.abort();
-	        	window.location.href = "http://my.web.com:8090/timeout.html";
+	        	window.location.href = "http://my.web.com:8091/timeout.html";
 	        }
 	    }
 	}
